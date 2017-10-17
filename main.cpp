@@ -115,7 +115,7 @@ int main(const int argc, const char **argv) {
 	// Finally write the file out
 	file.open(outname + ".ppm", std::fstream::out);
 	if(!file.is_open()){
-		std::cout << "Unable to open " << argv[IN_FILENAME-1] << std::endl;
+		std::cout << "Unable to open " << argv[OUT_FILENAME-1] << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	file << p;
