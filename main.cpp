@@ -106,7 +106,11 @@ int main(const int argc, const char **argv) {
 				// make there more red when the x index increases
 				// make there more blue when the y index increases
 				// make the blue more intense based on how many occurrences of this word
-				p[x][y] = rgb_pixel( (uint8_t)(vect_idx_x * k), (uint8_t)(vect_idx_y * k), unique_word.second.size() * k);
+				rgb_pixel pix( (uint8_t)(vect_idx_x * k), (uint8_t)(vect_idx_y * k), unique_word.second.size() * k);
+
+				// Display something on the screen so the user knows something's happening.
+				std::cout << pix << std::endl;
+				p[x][y] = pix;
 			}
 
 		}
