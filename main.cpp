@@ -36,6 +36,10 @@ int main(const int argc, const char **argv) {
 	 */
 	std::fstream file;
 	file.open(argv[IN_FILENAME-1], std::fstream::in);
+	if(!file.is_open()){
+		std::cout << "Unable to open " << argv[IN_FILENAME-1] << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
 	/*!
 	 * @brief The word currently being processed
@@ -49,9 +53,9 @@ int main(const int argc, const char **argv) {
 
 	/*!
 	 * @brief The maximum number of occurrences of any word will be used later of evenly distributing the colour values.
-	 * So the word with the most occurences will be bluer
+	 * So the word with the most occurences will be bluer. Must start at one to prevent a divide by 0 error if only one word.
 	 */
-	int max_occurrences = 0;
+	int max_occurrences = 1;
 	while(file >> word){
 
 		/* Remove punctuation https://stackoverflow.com/questions/19138983/c-remove-punctuation-from-string */
@@ -110,6 +114,10 @@ int main(const int argc, const char **argv) {
 
 	// Finally write the file out
 	file.open(outname + ".ppm", std::fstream::out);
+	if(!file.is_open()){
+		std::cout << "Unable to open " << argv[IN_FILENAME-1] << std::endl;
+		exit(EXIT_FAILURE);
+	}
 	file << p;
 	file.close();
 
