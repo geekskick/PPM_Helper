@@ -3,5 +3,8 @@ project(SongSim)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(SOURCE_FILES main.cpp ppm_file.cpp ppm_file.h)
-add_executable(SongSim ${SOURCE_FILES})
+add_subdirectory(src)
+add_subdirectory(test)
+
+add_executable(SongSim main.cpp)
+target_link_libraries(SongSim PUBLIC ppm_helper)
