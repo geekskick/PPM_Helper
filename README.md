@@ -32,3 +32,16 @@ If you decide to add a new row which is longer than previous rows, rather than h
 
 The header for the `.ppm` output is automatically generated based on what you put into the `ppm_image` class. 
 Stream out to the destination file using `<<` operator. The example provided is a simple rip off of [SongSim](https://colinmorris.github.io/SongSim/#/abc)
+
+## Build
+
+Once you have clones the repo use the following commands to build the library and test it.
+
+```bash
+mkdir build; cd build
+cmake ..
+make
+./test/ppm_test
+```
+
+Then you can link your application to the `build/src` directory to find the library and the header file.
