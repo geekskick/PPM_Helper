@@ -79,6 +79,20 @@ public:
 	 */
 	const uint8_t& blue(void) const 	{ return _b; }
 
+	/**
+	 * @brief      Equality Test
+	 * @param[in]  p     other pixel
+	 * @return     True if it's rgb are the same
+	 */
+	bool operator==(const rgb_pixel& p) const;
+
+	/**
+	 * @brief      Inequality Test
+	 * @param[in]  p     other pixel
+	 * @return     False if it's rgb are the same
+	 */
+	bool operator!=(const rgb_pixel& p) const;
+
 private:
 	uint8_t _r;	/*! The pixels' R value */
 	uint8_t _g; /*! The pixels' G value */
@@ -125,6 +139,20 @@ public:
 	 */
 	const int& 	height(void) const	{ return _h; }
 
+	/**
+	 * @brief      Equality operator
+	 * @param[in]  rhs   The right hand side
+	 * @return     true if the dimensions are equal
+	 */
+	bool 		operator== (const image_size& rhs) const ;
+
+	/**
+	 * @brief      Equality operator
+	 * @param[in]  rhs   The right hand side
+	 * @return     false if the dimensions are equal
+	 */
+	bool 		operator!= (const image_size& rhs) const;
+
 	/*!
 	 * @brief Describe the size as "w h"
 	 * @param os The stream to write to
@@ -149,7 +177,7 @@ public:
 			: _max_colour_value(0)
 	{ /*! Intentionally Blank */ }
 
-	ppm_image(const std::string file_name, const int max_colour)
+	ppm_image(const uint8_t max_colour)
 			: _max_colour_value(max_colour)
 	{ /*! Intentionally Blank */ }
 
@@ -231,6 +259,11 @@ private:
 	 * @param new_val The new colour
 	 */
 	void _colour_check(const rgb_pixel &new_val);
+
+	/**
+	 * @brief      If there are jagged dimensions then fill the gaps with white pixels
+	 */
+	void _fill(void);
 
 };
 

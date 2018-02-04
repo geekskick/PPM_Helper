@@ -14,12 +14,33 @@
 			{ 0			, 0			, UINT8_MAX }	// Blue
  };
 
+bool rgb_pixel::operator==(const rgb_pixel& p) const{
+	return _r == p._r && _g == p._g && _b == p._b;
+}
+
+bool rgb_pixel::operator!=(const rgb_pixel& p) const{
+	return _r != p._r || _g != p._g || _b != p._b;
+}
+
+bool image_size::operator== (const image_size& rhs) const{
+	return rhs.width() == width() && rhs.height() == height();
+}
+
+bool image_size::operator!= (const image_size& rhs) const{
+	return rhs.width() != width() || rhs.height() != height();
+}
+
 void ppm_image::_width_check( const std::vector<rgb_pixel> &last_line ) {
-	if(last_line.size() > _size.width()){ _size.width() = (int)last_line.size(); }
+	if(last_line.size() > _size.width()){ 
+		_size.width() = (int)last_line.size(); 
+		_fill();
+	}
 }
 
 void ppm_image::_colour_check( const rgb_pixel& new_val ) {
 	if(new_val.red() > _max_colour_value){ _max_colour_value = new_val.red(); }
+	if(new_val.green() > _max_colour_value){ _max_colour_value = new_val.green(); }
+	if(new_val.blue() > _max_colour_value){ _max_colour_value = new_val.blue(); }
 }
 
 void ppm_image::operator<<( const std::vector<rgb_pixel> &line ) {
@@ -77,3 +98,15 @@ std::ostream &operator<<( std::ostream &os, const image_size &s ) {
 	os << s._w << " " << s._h;
 	return os;
 }
+
+void ppm_image::_fill(void){
+	for_each(_data.begin(), _data.end(), [*this](std::vector<rgb_pixel>& row){
+		if(row.size() < _size.width()){
+			for(int col = row.size(); col < _size.width(); col++){
+				row.emplace_back(rgb_pixel::get_colour(rgb_pixel::colours::WHITE));
+			}
+		}
+	});
+}
+
+
