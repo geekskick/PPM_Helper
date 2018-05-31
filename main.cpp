@@ -3,26 +3,27 @@
 #include <fstream>
 #include "ppm_file.h"
 
-enum ARGS{ APP_NAME = 1, IN_FILENAME, OUT_FILENAME };
+enum class ARGS{ APP_NAME = 1, IN_FILENAME, OUT_FILENAME };
 
 void print_usage(const std::string& app_name){
 	std::cout << app_name << " usage: ./" << app_name << " <input filename> <output filename (optional)>" << std::endl;
 }
+
 int main(const int argc, const char **argv) {
 
 	// Do some simple checking of the user input
-	if(argc < IN_FILENAME){
-		print_usage(std::string(argv[APP_NAME-1]));
+	if(argc < static_cast<int>(ARGS::IN_FILENAME)){
+		print_usage(std::string(argv[static_cast<int>(ARGS::APP_NAME) - 1]));
 		exit(EXIT_FAILURE);
 	}
 
 	/*!
 	 * @brief The output filename
 	 */
-	std::string outname = "default";
+	std::string outname { "default" };
 
-	if(argc >= OUT_FILENAME){
-		outname = argv[OUT_FILENAME-1];
+	if(argc >= static_cast<int>(ARGS::OUT_FILENAME)){
+		outname = argv[static_cast<int>(ARGS::OUT_FILENAME) - 1];
 	}
 
 	/*!
@@ -35,9 +36,9 @@ int main(const int argc, const char **argv) {
 	 * @brief The input
 	 */
 	std::fstream file;
-	file.open(argv[IN_FILENAME-1], std::fstream::in);
+	file.open(argv[static_cast<int>(ARGS::IN_FILENAME) - 1], std::fstream::in);
 	if(!file.is_open()){
-		std::cout << "Unable to open " << argv[IN_FILENAME-1] << std::endl;
+		std::cout << "Unable to open " << argv[static_cast<int>(ARGS::IN_FILENAME) - 1] << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
@@ -49,13 +50,13 @@ int main(const int argc, const char **argv) {
 	/*!
 	 * @brief The index of this occurrence of the word
 	 */
-	int word_num = 0;
+	int word_num { 0 };
 
 	/*!
 	 * @brief The maximum number of occurrences of any word will be used later of evenly distributing the colour values.
 	 * So the word with the most occurences will be bluer. Must start at one to prevent a divide by 0 error if only one word.
 	 */
-	int max_occurrences = 1;
+	int max_occurrences { 1 };
 	while(file >> word){
 
 		/* Remove punctuation https://stackoverflow.com/questions/19138983/c-remove-punctuation-from-string */
@@ -102,7 +103,7 @@ int main(const int argc, const char **argv) {
 				// Increment this before use to prevent having a multiplier of 0
 				vect_idx_y++;
 
-				// These colours values are farily random:
+				// These colours values are fairly random:
 				// make there more red when the x index increases
 				// make there more blue when the y index increases
 				// make the blue more intense based on how many occurrences of this word
@@ -119,7 +120,7 @@ int main(const int argc, const char **argv) {
 	// Finally write the file out
 	file.open(outname + ".ppm", std::fstream::out);
 	if(!file.is_open()){
-		std::cout << "Unable to open " << argv[OUT_FILENAME-1] << std::endl;
+		std::cout << "Unable to open " << argv[static_cast<int>(ARGS::OUT_FILENAME) - 1] << std::endl;
 		exit(EXIT_FAILURE);
 	}
 	file << p;

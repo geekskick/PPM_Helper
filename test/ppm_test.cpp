@@ -3,12 +3,12 @@
 #include "ppm_file.h"
 
 TEST_CASE("Pixels", "[pixels]"){
-	rgb_pixel r = rgb_pixel::get_colour(rgb_pixel::colours::RED);
-	rgb_pixel g = rgb_pixel::get_colour(rgb_pixel::colours::GREEN);
-	rgb_pixel blu = rgb_pixel::get_colour(rgb_pixel::colours::BLUE);
-	rgb_pixel blk = rgb_pixel::get_colour(rgb_pixel::colours::BLACK);
-	rgb_pixel w = rgb_pixel::get_colour(rgb_pixel::colours::WHITE);
-	rgb_pixel t(100,99,98);
+	auto r { rgb_pixel::get_colour(rgb_pixel::colours::RED)};
+	auto g { rgb_pixel::get_colour(rgb_pixel::colours::GREEN)};
+	auto blu {rgb_pixel::get_colour(rgb_pixel::colours::BLUE)};
+	auto blk {rgb_pixel::get_colour(rgb_pixel::colours::BLACK)};
+	auto w {rgb_pixel::get_colour(rgb_pixel::colours::WHITE)};
+	rgb_pixel t{100,99,98};
 
 	REQUIRE(r.red() == 255);
 	REQUIRE(r.green() == 0);
@@ -73,7 +73,7 @@ TEST_CASE("PPM Building", "[ppm_build]"){
 	REQUIRE(ppm.size() == image_size());
 	REQUIRE(ppm.max_colour() == 0);
 
-	rgb_pixel r = rgb_pixel::get_colour(rgb_pixel::RED);
+	auto r { rgb_pixel::get_colour(rgb_pixel::colours::RED) };
 	ppm << r;
 	REQUIRE(ppm.size() == image_size(1,1));
 	REQUIRE(ppm.max_colour() == 255);
@@ -117,7 +117,7 @@ TEST_CASE("PPM Streaming", "[ppm_stream]"){
 	std::stringstream result;
 	result << ppm;
 
-	std::string EXPECTED_IMAGE = "P3\n2 2\n255\n0 255 0 255 0 0 \n255 0 0 0 255 0 \n";
+	std::string EXPECTED_IMAGE { "P3\n2 2\n255\n0 255 0 255 0 0 \n255 0 0 0 255 0 \n"};
 	REQUIRE(EXPECTED_IMAGE == result.str());
 
 }

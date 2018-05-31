@@ -18,7 +18,7 @@ public:
 	/*!
 	 * @brief For accessing the rgb_pixel::_examples array to get premade pixel objects
 	 */
-	enum colours { BLACK = 0, WHITE, RED, GREEN, BLUE, COUNT };
+	enum class colours { BLACK = 0, WHITE, RED, GREEN, BLUE, COUNT };
 
 	/*!
 	 * @brief Get a copy of a premade pixel object
@@ -101,7 +101,7 @@ private:
 	/*!
 	 * @brief Example colours, must be in the same order as the rgb_pixel::colours enum
 	 */
-	static const rgb_pixel _examples[colours::COUNT];
+	static const rgb_pixel _examples[static_cast<int>(colours::COUNT)];
 };
 
 //------------------------------------------
