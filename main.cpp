@@ -9,6 +9,7 @@ void print_usage(const std::string& app_name){
 	std::cout << app_name << " usage: ./" << app_name << " <input filename> <output filename (optional)>" << std::endl;
 }
 
+const std::string whirly {"\\|/-"};
 int main(const int argc, const char **argv) {
 
 	// Do some simple checking of the user input
@@ -90,6 +91,7 @@ int main(const int argc, const char **argv) {
 	const int k = UINT8_MAX/max_occurrences;
 
 	// Create the image by changing values in the grid
+	int i = 0;
 	for(std::pair<std::string, std::vector<int>> unique_word : wordmap){
 		uint8_t vect_idx_x = 0;
 
@@ -110,12 +112,14 @@ int main(const int argc, const char **argv) {
 				rgb_pixel pix( (uint8_t)(vect_idx_x * k), (uint8_t)(vect_idx_y * k), unique_word.second.size() * k);
 
 				// Display something on the screen so the user knows something's happening.
-				std::cout << pix << std::endl;
+				std::cout << "\r" << whirly[i++ % whirly.length() - 1];
 				p[x][y] = pix;
 			}
 
 		}
 	}
+
+	std::cout << "\r";
 
 	// Finally write the file out
 	file.open(outname + ".ppm", std::fstream::out);
@@ -125,6 +129,8 @@ int main(const int argc, const char **argv) {
 	}
 	file << p;
 	file.close();
+
+	std::cout << "Result written to " << outname << ".ppm" << std::endl;
 
 	return 0;
 }
