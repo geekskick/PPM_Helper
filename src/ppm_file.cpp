@@ -50,7 +50,7 @@ void ppm_image::operator<<(const std::vector<rgb_pixel> &line) {
 	}
 }
 
-void ppm_image::new_line(void) {
+void ppm_image::new_line() {
 	_data.emplace_back(std::vector<rgb_pixel>());
 	_size.height()++;
 }
@@ -98,7 +98,7 @@ std::ostream &operator<<(std::ostream &os, const image_size &s) {
 	return os;
 }
 
-void ppm_image::_fill(void) {
+void ppm_image::_fill() {
 	for_each(_data.begin(), _data.end(), [*this](std::vector<rgb_pixel> &row) {
 		if( row.size() < _size.width()) {
 			for( auto col{static_cast<int>(row.size())}; col < _size.width(); col++ ) {

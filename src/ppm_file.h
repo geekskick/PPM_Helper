@@ -28,9 +28,7 @@ public:
 	 */
 	static rgb_pixel get_colour(const colours c);
 
-	rgb_pixel(void)
-			: _r(0), _g(0), _b(0)
-	{ /*! Intentionally blank */ }
+	rgb_pixel() = default;
 
 	rgb_pixel(const uint8_t r, const uint8_t g, const uint8_t b)
 			: _r(r), _g(g), _b(b)
@@ -50,34 +48,34 @@ public:
 	 * @brief Accessor
 	 * @return The red value
 	 */
-	uint8_t& red(void) 		{ return _r; }
+	uint8_t& red() 		{ return _r; }
 	/*!
 	 * @brief Accessor
 	 * @return The green value
 	 */
-	uint8_t& green(void) 	{ return _g; }
+	uint8_t& green() 	{ return _g; }
 	/*!
 	 * @brief Accessor
 	 * @return The blue value
 	 */
-	uint8_t& blue(void)		{ return _b; }
+	uint8_t& blue()		{ return _b; }
 
 	// Const accessors
 	/*!
 	 * @brief Const accessor
 	 * @return The red value
 	 */
-	const uint8_t& red(void) const 		{ return _r; }
+	const uint8_t& red() const 		{ return _r; }
 	/*!
 	 * @brief Const accessor
 	 * @return The green value
 	 */
-	const uint8_t& green(void) const 	{ return _g; }
+	const uint8_t& green() const 	{ return _g; }
 	/*!
 	 * @brief Const accessor
 	 * @return The blue value
 	 */
-	const uint8_t& blue(void) const 	{ return _b; }
+	const uint8_t& blue() const 	{ return _b; }
 
 	/**
 	 * @brief      Equality Test
@@ -94,9 +92,9 @@ public:
 	bool operator!=(const rgb_pixel& p) const;
 
 private:
-	uint8_t _r;	/*! The pixels' R value */
-	uint8_t _g; /*! The pixels' G value */
-	uint8_t _b; /*! The pixels' B value */
+	uint8_t _r{0};	/*! The pixels' R value */
+	uint8_t _g{0}; /*! The pixels' G value */
+	uint8_t _b{0}; /*! The pixels' B value */
 
 	/*!
 	 * @brief Example colours, must be in the same order as the rgb_pixel::colours enum
@@ -110,9 +108,8 @@ private:
  */
 class image_size{
 public:
-	image_size(void)
-			:_w(0), _h(0)
-	{ /*! Intentionally Blank */ }
+	image_size() = default;
+
 	image_size(const int w, const int h)
 			: _w(w), _h(h)
 	{ /*! Intentionally Blank */ }
@@ -121,23 +118,23 @@ public:
 	 * @brief Accessor
 	 * @return The width
 	 */
-	int& 		width(void) 		{ return _w; }
+	int& 		width() 		{ return _w; }
 	/*!
 	 * @brief Accessor
 	 * @return The height
 	 */
-	int& 		height(void)		{ return _h; }
+	int& 		height()		{ return _h; }
 
 	/*!
 	 * @brief Const accessor
 	 * @return The width
 	 */
-	const int& 	width(void) const	{ return _w; }
+	const int& 	width() const	{ return _w; }
 	/*!
 	 * @brief const accessor
 	 * @return The height
 	 */
-	const int& 	height(void) const	{ return _h; }
+	const int& 	height() const	{ return _h; }
 
 	/**
 	 * @brief      Equality operator
@@ -162,8 +159,8 @@ public:
 	friend std::ostream& operator<<(std::ostream& os, const image_size& s);
 
 private:
-	int _w; /*! The image's width 	*/
-	int _h; /*! The image's height 	*/
+	int _w{0}; /*! The image's width 	*/
+	int _h{0}; /*! The image's height 	*/
 };
 
 /*!
@@ -173,9 +170,7 @@ class ppm_image
 {
 public:
 	/// Ctors
-	ppm_image(void)
-			: _max_colour_value(0)
-	{ /*! Intentionally Blank */ }
+	ppm_image() = default;
 
 	ppm_image(const uint8_t max_colour)
 			: _max_colour_value(max_colour)
@@ -186,23 +181,23 @@ public:
 	 * @brief Accessor
 	 * @return The max colour value used
 	 */
-	uint8_t& 				max_colour(void)		{ return _max_colour_value; }
+	uint8_t& 				max_colour()		{ return _max_colour_value; }
 	/*!
 	 * @brief Accessor
 	 * @return The size of the image
 	 */
-	image_size&				size(void) 				{ return _size; 			}
+	image_size&				size() 				{ return _size; 			}
 
 	/*!
 	 * @brief const accessor
 	 * @return The max colour value used
 	 */
-	const uint8_t& 			max_colour(void) const	{ return _max_colour_value; }
+	const uint8_t& 			max_colour() const	{ return _max_colour_value; }
 	/*!
 	 * @brief Const accessor
 	 * @return The size of the image
 	 */
-	const image_size&		size(void) const		{ return _size; 			}
+	const image_size&		size() const		{ return _size; 			}
 
 	/*!
 	 * @brief Add a value to the last line
@@ -219,7 +214,7 @@ public:
 	/*!
 	 * @brief Add a new line of pixels to the image
 	 */
-	void new_line(void);
+	void new_line();
 
 	/*!
 	 * @brief Add to the last line of the image
@@ -243,7 +238,7 @@ public:
 	std::vector<rgb_pixel>&operator[](const int n);
 
 private:
-	uint8_t 							_max_colour_value;
+	uint8_t 							_max_colour_value{0};
 	image_size							_size;
 	std::vector<std::vector<rgb_pixel>> _data;
 
@@ -263,7 +258,7 @@ private:
 	/**
 	 * @brief      If there are jagged dimensions then fill the gaps with white pixels
 	 */
-	void _fill(void);
+	void _fill();
 
 };
 
