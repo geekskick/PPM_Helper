@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 #include <unordered_map>
 #include <fstream>
 #include "ppm_file.h"
@@ -9,66 +10,45 @@ void print_usage(const std::string& app_name){
 	std::cout << app_name << " usage: ./" << app_name << " <input filename> <output filename (optional)>" << std::endl;
 }
 
-const std::string whirly {"\\|/-"};
+constexpr std::string_view whirly {"\\|/-"};
 int main(const int argc, const char **argv) {
 
-	// Do some simple checking of the user input
 	if(argc < static_cast<int>(ARGS::IN_FILENAME)){
 		print_usage(std::string(argv[static_cast<int>(ARGS::APP_NAME) - 1]));
 		exit(EXIT_FAILURE);
 	}
 
-	/*!
-	 * @brief The output filename
-	 */
-	std::string outname { "default" };
+	auto outname = std::string{ "default" };
 
 	if(argc >= static_cast<int>(ARGS::OUT_FILENAME)){
 		outname = argv[static_cast<int>(ARGS::OUT_FILENAME) - 1];
 	}
 
-	/*!
-	 * @brief The words will be put into a hashmap of unique word occurrences, and which indices of the
-	 * input those occurrences happened
-	 */
-	std::unordered_map<std::string, std::vector<int>> wordmap;
+	auto wordmap = std::unordered_map<std::string, std::vector<int>> {};
 
-	/*!
-	 * @brief The input
-	 */
-	std::fstream file;
-	file.open(argv[static_cast<int>(ARGS::IN_FILENAME) - 1], std::fstream::in);
+    auto file = std::fstream{argv[static_cast<int>(ARGS::IN_FILENAME) - 1], std::fstream::in};
 	if(!file.is_open()){
 		std::cout << "Unable to open " << argv[static_cast<int>(ARGS::IN_FILENAME) - 1] << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	/*!
-	 * @brief The word currently being processed
-	 */
-	std::string word;
+	auto word = std::string{};
+	auto word_num = 0;
 
-	/*!
-	 * @brief The index of this occurrence of the word
-	 */
-	int word_num { 0 };
-
-	/*!
-	 * @brief The maximum number of occurrences of any word will be used later of evenly distributing the colour values.
+	/*
+	 * The maximum number of occurrences of any word will be used later of evenly distributing the colour values.
 	 * So the word with the most occurences will be bluer. Must start at one to prevent a divide by 0 error if only one word.
 	 */
-	int max_occurrences { 1 };
+	auto max_occurrences = std::vector<int>::size_type{1};
+
 	while(file >> word){
 
-		/* Remove punctuation https://stackoverflow.com/questions/19138983/c-remove-punctuation-from-string */
 		word.erase (std::remove_if (word.begin (), word.end (), ispunct), word.end ());
-		/* Make lowercase https://notfaq.wordpress.com/2007/08/04/cc-convert-string-to-upperlower-case/ */
 		std::transform(word.begin(), word.end(), word.begin(), ::tolower);
 
-		// if the word is in the map already then add to the map value
 		if(wordmap.find(word) != wordmap.end()){
 			wordmap[word].push_back(word_num);
-			if(wordmap[word].size() > max_occurrences){ max_occurrences = (int)wordmap[word].size(); }
+			if(wordmap[word].size() > max_occurrences){ max_occurrences = static_cast<int>(wordmap[word].size()); }
 		}
 		else{
 			// if the first occurrence make a new vector
@@ -78,7 +58,7 @@ int main(const int argc, const char **argv) {
 	}
 	file.close();
 
-	ppm_image p;
+	auto p = ppm_image{};
 
 	// Create background of image totally white
 	for(int w = 0; w < word_num; w++){
@@ -88,20 +68,20 @@ int main(const int argc, const char **argv) {
 	/*!
 	 * @brief k is the multiplier for the values, so that the word with the most occurrences is the bluest
 	 */
-	const int k = UINT8_MAX/max_occurrences;
+	const auto k = std::numeric_limits<uint8_t>::max()/max_occurrences;
 
 	// Create the image by changing values in the grid
 	int i = 0;
-	for(std::pair<std::string, std::vector<int>> unique_word : wordmap){
-		uint8_t vect_idx_x = 0;
+	for(const auto& unique_word : wordmap){
+		auto vect_idx_x = 0;
 
 		// Each word has a number of indices, so loop over the indices and use each
 		// as an x and as a y value to make the grid.
-		for(int x: unique_word.second){
+		for(const auto& x: unique_word.second){
 			// Increment this before use to prevent having a multiplier of 0
 			vect_idx_x++;
-			uint8_t vect_idx_y = 0;
-			for(int y: unique_word.second) {
+			auto vect_idx_y = 0;
+			for(const auto& y: unique_word.second) {
 				// Increment this before use to prevent having a multiplier of 0
 				vect_idx_y++;
 
@@ -109,7 +89,10 @@ int main(const int argc, const char **argv) {
 				// make there more red when the x index increases
 				// make there more blue when the y index increases
 				// make the blue more intense based on how many occurrences of this word
-				rgb_pixel pix( (uint8_t)(vect_idx_x * k), (uint8_t)(vect_idx_y * k), unique_word.second.size() * k);
+                const auto r = vect_idx_x * k;
+                const auto g = vect_idx_y * k;
+                const auto b = unique_word.second.size() * k;
+				const auto pix = rgb_pixel{static_cast<uint8_t>(r), static_cast<uint8_t>(g), static_cast<uint8_t>(b)};
 
 				// Display something on the screen so the user knows something's happening.
 				std::cout << "\r" << whirly[i++ % whirly.length() - 1];
