@@ -3,33 +3,35 @@
 #include <unordered_map>
 #include <fstream>
 #include "ppm_file.h"
+#include <tclap/CmdLine.h>
 
-enum class ARGS{ APP_NAME = 1, IN_FILENAME, OUT_FILENAME };
-
-void print_usage(const std::string& app_name){
-	std::cout << app_name << " usage: ./" << app_name << " <input filename> <output filename (optional)>" << std::endl;
-}
-
-constexpr std::string_view whirly {"\\|/-"};
 int main(const int argc, const char **argv) {
 
-	if(argc < static_cast<int>(ARGS::IN_FILENAME)){
-		print_usage(std::string(argv[static_cast<int>(ARGS::APP_NAME) - 1]));
-		exit(EXIT_FAILURE);
-	}
+    constexpr std::string_view whirly {"\\|/-"};
+    auto cmd = TCLAP::CmdLine{ "Draws the song lyrics, or basically any words, as a map to show the structure of the words", '=', "0.2" };
+    auto in_arg = TCLAP::ValueArg<std::string>{ "i", "in", "Input filename", true, "default", "string" }; 
+    auto out_arg = TCLAP::ValueArg<std::string>{ "o", "out", "Output filename", false, "default", "string" }; 
+    cmd.add(in_arg);
+    cmd.add(out_arg);
 
-	auto outname = std::string{ "default" };
-
-	if(argc >= static_cast<int>(ARGS::OUT_FILENAME)){
-		outname = argv[static_cast<int>(ARGS::OUT_FILENAME) - 1];
-	}
+    auto outfile = std::string{};
+    auto infile = std::string{};
+    try{
+        cmd.parse(argc, argv);
+        outfile = out_arg.getValue();
+        infile = in_arg.getValue();
+    }
+    catch(TCLAP::ArgException& e){
+        std::cerr << "Error: " << e.error() << " for arg " << e.argId() << '\n';
+        return EXIT_FAILURE;
+    }
 
 	auto wordmap = std::unordered_map<std::string, std::vector<int>> {};
+    auto file = std::fstream{infile, std::fstream::in};
 
-    auto file = std::fstream{argv[static_cast<int>(ARGS::IN_FILENAME) - 1], std::fstream::in};
 	if(!file.is_open()){
-		std::cout << "Unable to open " << argv[static_cast<int>(ARGS::IN_FILENAME) - 1] << std::endl;
-		exit(EXIT_FAILURE);
+		std::cerr << "Unable to open " << infile << '\n';
+		return EXIT_FAILURE;
 	}
 
 	auto word = std::string{};
@@ -65,9 +67,8 @@ int main(const int argc, const char **argv) {
 		p << std::vector<rgb_pixel>(word_num, rgb_pixel::get_colour(rgb_pixel::colours::WHITE));
 	}
 
-	/*!
-	 * @brief k is the multiplier for the values, so that the word with the most occurrences is the bluest
-	 */
+	
+	// k is the multiplier for the values, so that the word with the most occurrences is the bluest
 	const auto k = std::numeric_limits<uint8_t>::max()/max_occurrences;
 
 	// Create the image by changing values in the grid
@@ -105,15 +106,15 @@ int main(const int argc, const char **argv) {
 	std::cout << "\r";
 
 	// Finally write the file out
-	file.open(outname + ".ppm", std::fstream::out);
+	file.open(outfile + ".ppm", std::fstream::out);
 	if(!file.is_open()){
-		std::cout << "Unable to open " << argv[static_cast<int>(ARGS::OUT_FILENAME) - 1] << std::endl;
-		exit(EXIT_FAILURE);
+		std::cerr << "Unable to open " << outfile << '\n';
+		return EXIT_FAILURE;
 	}
 	file << p;
 	file.close();
 
-	std::cout << "Result written to " << outname << ".ppm" << std::endl;
+	std::cout << "Result written to " << outfile << ".ppm" << std::endl;
 
-	return 0;
+	return EXIT_SUCCESS;
 }
